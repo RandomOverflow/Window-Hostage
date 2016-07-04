@@ -1,0 +1,47 @@
+﻿<Window x:Class="Window_Hostage.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Window_Hostage.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Title="Window Hostage"
+        Width="800"
+        Height="600"
+        Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d" Icon="app.ico">
+    <Grid>
+        <DataGrid x:Name="DataGridWindows"
+                  Margin="10"
+                  d:DataContext="{d:DesignData}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="MenuItemShowHide"
+                              Click="MenuItemShowHide_Click"
+                              Header="Show/Hide" />
+                    <Separator />
+                    <MenuItem Header="Window Info" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Binding="{Binding Title}" Header="Window Title" />
+                <DataGridTextColumn Binding="{Binding ProcessOwner.ProcessName}" Header="Process" />
+                <DataGridTextColumn Binding="{Binding Handle}" Header="Handle" />
+                <DataGridTextColumn Binding="{Binding CurrentStatus}" Header="Status">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Style.Resources>
+                                <converters:StatusToBrushConverter x:Key="StatusToBrushConverter" />
+                            </Style.Resources>
+                            <Setter Property="Background"
+                                    Value="{Binding CurrentStatus, Converter={StaticResource StatusToBrushConverter}}" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
