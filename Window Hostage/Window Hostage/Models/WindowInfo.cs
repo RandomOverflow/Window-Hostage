@@ -108,6 +108,9 @@ namespace Window_Hostage
             ForceMinimized = 11
         }
 
+        private Status _currentStatus;
+        private string _title;
+
         public WindowInfo(IntPtr handle)
         {
             Handle = handle;
@@ -120,7 +123,6 @@ namespace Window_Hostage
 
         public Process ProcessOwner { get; }
         public IntPtr Handle { get; }
-        private string _title;
 
         public string Title
         {
@@ -132,13 +134,11 @@ namespace Window_Hostage
                 _title = value;
                 OnPropertyChanged("Title");
             }
-
         }
 
-        private Status _currentStatus;
-        public Status CurrentStatus { get {return _currentStatus;
-            
-        }
+        public Status CurrentStatus
+        {
+            get { return _currentStatus; }
             private set
             {
                 if (_currentStatus == value) return;
@@ -196,6 +196,7 @@ namespace Window_Hostage
             GetWindowText(Handle, windowText, 1024);
             return windowText.ToString();
         }
+
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, WindowShowStyle nCmdShow);
 

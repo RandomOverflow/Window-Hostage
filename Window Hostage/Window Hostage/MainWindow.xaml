@@ -7,41 +7,110 @@
         Title="Window Hostage"
         Width="800"
         Height="600"
+        Background="White"
+        Closing="Window_Closing"
+        Icon="app.ico"
         Loaded="Window_Loaded"
         WindowStartupLocation="CenterScreen"
-        mc:Ignorable="d" Icon="app.ico">
-    <Grid>
-        <DataGrid x:Name="DataGridWindows"
-                  Margin="10"
-                  d:DataContext="{d:DesignData}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True">
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem x:Name="MenuItemShowHide"
-                              Click="MenuItemShowHide_Click"
-                              Header="Show/Hide" />
-                    <Separator />
-                    <MenuItem Header="Window Info" />
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-            <DataGrid.Columns>
+        mc:Ignorable="d">
+    <TabControl Margin="10">
+        <TabItem Header="Windows">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="67*" />
+                    <ColumnDefinition Width="679*" />
+                </Grid.ColumnDefinitions>
+                <DataGrid x:Name="DataGridWindows"
+                          Margin="10"
+                          d:DataContext="{d:DesignData}"
+                          AutoGenerateColumns="False"
+                          Background="White"
+                          IsReadOnly="True" Grid.ColumnSpan="2">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem x:Name="MenuItemShowHide"
+                                      Click="MenuItemShowHide_Click"
+                                      Header="Show/Hide" />
+                            <Separator />
+                            <MenuItem Header="Window Info" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.Resources>
+                        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
 
-                <DataGridTextColumn Binding="{Binding Title}" Header="Window Title" />
-                <DataGridTextColumn Binding="{Binding ProcessOwner.ProcessName}" Header="Process" />
-                <DataGridTextColumn Binding="{Binding Handle}" Header="Handle" />
-                <DataGridTextColumn Binding="{Binding CurrentStatus}" Header="Status">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Style.Resources>
-                                <converters:StatusToBrushConverter x:Key="StatusToBrushConverter" />
-                            </Style.Resources>
-                            <Setter Property="Background"
-                                    Value="{Binding CurrentStatus, Converter={StaticResource StatusToBrushConverter}}" />
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+                        <DataGridTextColumn Binding="{Binding Title}" Header="Title"
+                                            Visibility="{Binding Source={x:Reference CheckboxShowTitle},
+                                 Path=IsChecked,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <DataGridTextColumn Binding="{Binding ProcessOwner.ProcessName}" Header="Process Owner"
+                                            Visibility="{Binding Source={x:Reference CheckboxShowProcessOwner},
+                                 Path=IsChecked,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <DataGridTextColumn Binding="{Binding Handle}" Header="Handle"
+                                            Visibility="{Binding Source={x:Reference CheckboxShowHandle},
+                                 Path=IsChecked,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <DataGridTextColumn Binding="{Binding CurrentStatus}" Header="Status"
+                                            Visibility="{Binding Source={x:Reference CheckboxShowStatus},
+                                 Path=IsChecked,
+                                 Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Style.Resources>
+                                        <converters:StatusToBrushConverter x:Key="StatusToBrushConverter" />
+                                    </Style.Resources>
+                                    <Setter Property="Background"
+                                            Value="{Binding CurrentStatus, Converter={StaticResource StatusToBrushConverter}}" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Settings">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0"
+                       Grid.Column="0"
+                       Content="Windows Update Delay:" />
+                <Slider x:Name="SliderUpdateDelay"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Maximum="60000"
+                        Minimum="500"
+                        SmallChange="100"
+                        ValueChanged="SliderUpdateDelay_ValueChanged"
+                        Value="1000" />
+                <Label Grid.Row="0"
+                       Grid.Column="2"
+                       Content="{Binding ElementName=SliderUpdateDelay,
+                                         Path=Value}"
+                       ContentStringFormat="{}{0:#} milliseconds" />
+
+                <GroupBox Grid.Row="1"
+                          Grid.Column="0"
+                          Header="Window Informations">
+                    <GroupBox.Content>
+                        <StackPanel>
+                            <CheckBox x:Name="CheckboxShowTitle" Content="Title" IsChecked="True" />
+                            <CheckBox x:Name="CheckboxShowProcessOwner" Content="Process Owner" IsChecked="True" />
+                            <CheckBox x:Name="CheckboxShowHandle" Content="Handle" IsChecked="True" />
+                            <CheckBox x:Name="CheckboxShowStatus" Content="Status" IsChecked="True" />
+                        </StackPanel>
+                    </GroupBox.Content>
+                </GroupBox>
+            </Grid>
+        </TabItem>
+    </TabControl>
 </Window>
